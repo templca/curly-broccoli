@@ -13,23 +13,23 @@ public class gam
     // instance variables - replace the example below with your own
     private int x;
     boolean running = true;
-    String house="you're at the house";
-    String beach="you're at the beach";
-    String path="you're on the path";
-    String cave="you're in the cave";
-    String coconut="you're on the coconut crab beach";
-    String forest="you're in the forest";
-    String sea="you're in the sea";
-    String hut="you're in the wood hut";
-    String kitchen="you're in the kitchen";
-    String area[]= {house, beach, path, cave, coconut, forest, sea, hut, kitchen};
     boolean hasCoco=false;
     boolean hasAxe=false;
     boolean hasWood=false;
     boolean branches=false;
+    boolean lose=false;
+    boolean dinner=false;
     public int room=0;
     String command;
-    String wow;
+    String splitRooms;
+    String splitExtra;
+    String splitLook;
+    String areas[];
+    String parts[];
+    String looking[];
+    File rooms=new File("roomtext.txt");
+    File extra=new File("extras.txt");
+    File look=new File("look.txt");
 
     /**
      * Constructor for objects of class game
@@ -37,152 +37,203 @@ public class gam
     public gam()
     {
         // initialise instance variables
-        x = 0;
-        File rooms=new File("roomtext.txt");
-        try{
-            Scanner readfiles = new Scanner(rooms);
+        try {
+            Scanner readfiles = new Scanner(rooms); 
             while (readfiles.hasNextLine()){
-                wow=(readfiles.nextLine());
+                splitRooms=(readfiles.nextLine());
             }
-            String parts[]=wow.split("123");
-            for (int i=0;i<parts.length;i++) {
-                System.out.println(parts[i]);
+            areas=splitRooms.split("123");
+        } catch (IOException e) {
+            System.out.println("something went wrong. (rooms)");
+        }
+        
+        try {
+            Scanner readExtra = new Scanner(extra); 
+            while (readExtra.hasNextLine()){
+                splitExtra=(readExtra.nextLine());
             }
+            parts=splitExtra.split("123");
+        } catch (IOException e) {
+            System.out.println("something went wrong. (extra)");
         }
-        catch (IOException e) {
-            e.printStackTrace();
+        
+        try {
+            Scanner readLook = new Scanner(look); 
+            while (readLook.hasNextLine()){
+                splitLook=(readLook.nextLine());
+            }
+            looking=splitLook.split("123");
+        } catch (IOException e) {
+            System.out.println("something went wrong. (look)");
         }
+        x = 0;
         room=0;
         Scanner keyboard = new Scanner(System.in);
-        System.out.println(area[room]);
+        System.out.println("commands: north, south, east, west, up, down, pick up, use *item*, look");
+        System.out.println(areas[room]);
         System.out.println("Where would you like to go?");
 
-        while (running=true) {
+        while (running==true) {
             command=keyboard.nextLine();
             switch (command) {
                 case "south": 
-                if (room==0) {
-                    room=1;
-                    System.out.println(area[room]);
-                } else if (room==5) {
-                    room=room-2;
-                    System.out.println(area[room]);
-                } else {
-                    System.out.println("you can't go that way!");
-                }
-                break;
+                    if (room==0) {
+                        room=1;
+                        System.out.println(areas[room]);
+                        if (branches==false) {
+                            System.out.println(parts[4]);
+                        }
+                    } else if (room==5) {
+                        room=room-2;
+                        System.out.println(areas[room]);
+                        hasAxe=false;
+                        hasWood=false;
+                        if (hasCoco) {
+                            System.out.println(parts[0]);
+                        } else {
+                            System.out.println(parts[1]);
+                            lose=true;
+                        }
+                    } else {
+                        System.out.println("you can't go that way!");
+                    }
+                    break;
                 case "west":
-                if (room==1 && hasAxe) {
-                    room=room+3;
-                    System.out.println(area[room]);
-                } else if (room==1 && !hasAxe) { 
-                    System.out.println("you can't go that way!");
-                } else if (room==2) {
-                    room=room-2;
-                    System.out.println(area[room]);
-                }
-                else if (room==5) {
-                    room=room+2;
-                    System.out.println(area[room]);
-                } else {
-                    System.out.println("you can't go that way!");
-                }
-                break;
+                    if (room==1 && hasAxe) {
+                        room=room+3;
+                        System.out.println(areas[room]);
+                    } else if (room==1 && !hasAxe) { 
+                        System.out.println("you can't go that way!");
+                    } else if (room==2) {
+                        room=room-2;
+                        System.out.println(areas[room]);
+                    }
+                    else if (room==5) {
+                        room=room+2;
+                        System.out.println(areas[room]);
+                    } else {
+                        System.out.println("you can't go that way!");
+                    }
+                    break;
                 case "north": 
-                if (room==1) {
-                    room--;
-                    System.out.println(area[room]);
-                } else  {
-                    System.out.println("you can't go that way!");
-                }
-                break;
+                    if (room==1) {
+                        room--;
+                        System.out.println(areas[room]);
+                    } else  {
+                        System.out.println("you can't go that way!");
+                    }
+                    break;
                 case "east": 
-                if (room==0) {
-                    room=room+2;
-                    System.out.println(area[room]);
-                } else if (room==4){
-                    room=room-3;
-                    System.out.println(area[room]);
-                } else if (room==7){
-                    room=room-2;
-                    System.out.println(area[room]);
-                } else {
-                    System.out.println("you can't go that way!");
-                }
-                break;
+                    if (room==0) {
+                        room=room+2;
+                        System.out.println(areas[room]);
+                    } else if (room==4){
+                        room=room-3;
+                        System.out.println(areas[room]);
+                    } else if (room==7){
+                        room=room-2;
+                        System.out.println(areas[room]);
+                    } else {
+                        System.out.println("you can't go that way!");
+                    }
+                    break;
                 case "down":
-                if (room==1) {
-                    room=room+5;
-                    System.out.println(area[room]);
-                } else if (room==2){
-                    room=room+3;
-                    System.out.println(area[room]);
-                } else {
-                    System.out.println("you can't go that way!");
-                }
-                break;
+                    if (room==1) {
+                        room=room+5;
+                        System.out.println(areas[room]);
+                    } else if (room==2){
+                        room=room+3;
+                        System.out.println(areas[room]);
+                    } else {
+                        System.out.println("you can't go that way!");
+                    }
+                    break;
                 case "up":
-                if (room==6) {
-                    room=room-5;
-                    System.out.println(area[room]);
-                } else if (room==5){
-                    room=room-3;
-                    System.out.println(area[room]);
-                } else if (room==3) {
-                    room=room+5;
-                    System.out.println(area[room]);
-                } else {
-                    System.out.println("you can't go that way!");
-                }
-                break;
+                    if (room==6) {
+                        room=room-5;
+                        System.out.println(areas[room]);
+                    } else if (room==5){
+                        room=room-3;
+                        System.out.println(areas[room]);
+                    } else if (room==3) {
+                        room=room+5;
+                        System.out.println(areas[room]);
+                        dinner=true;
+                    } else {
+                        System.out.println("you can't go that way!");
+                    }
+                    break;
                 case "pick up":
-                if (room==4 && !hasCoco) {
-                    System.out.println("you have picked up a coconut crab!");
-                    hasCoco=true;
-                } else if (room==4 && hasCoco) {
-                    System.out.println("you already have one");
-                } else if (room==7 && !hasAxe) {
-                    System.out.println("you now have an axe");
-                    hasAxe=true;
-                } else if (room==7 && hasAxe) {
-                    System.out.println("there's nothing here to pick up");
-                } else {
-                    System.out.println("nothing to pick up");
-                }
-                break;
+                    if (room==4 && !hasCoco) {
+                        System.out.println("You have picked up a coconut crab!");
+                        hasCoco=true;
+                    } else if (room==4 && hasCoco) {
+                        System.out.println("You already have one!");
+                    } else if (room==7 && !hasAxe) {
+                        System.out.println("Obtained: Axe");
+                        hasAxe=true;
+                    } else if (room==7 && hasAxe) {
+                        System.out.println("There's nothing here to pick up.");
+                    } else {
+                        System.out.println("..Nothing to pick up.");
+                    }
+                    break;
                 case "use crab":
-                break;
+                case "use coconut crab":
+                    if (room==3 && hasCoco) {
+                        System.out.println(parts[2]);
+                    } else {
+                        System.out.println("Don't use it here! Save it for something more important.");
+                    }
+                    break;
                 case "use axe":
-                if (room==1 && hasAxe && !branches) {
-                    System.out.println("you cut down the branches");
-                    branches=true;
-                } else if (room==1 && hasAxe && branches) {
-                    System.out.println("branches already cut.");
-                } else if (room!=1 && room!=5 && hasAxe) {
-                    System.out.println("nothing good to chop here...");
-                } else if (room==5 && hasAxe && !hasWood) {
-                    System.out.println("you got some useless wood...");
-                    hasWood=true;
-                } else if (room==5 && hasAxe && hasWood) {
-                    System.out.println("you don't need more useless wood..");
-                }else { 
-                    System.out.println("you dont have an axe!");
-                }
-                break;
+                    if (room==1 && hasAxe && !branches) {
+                        System.out.println("You cut down the branches. The pathway east is now cleared.");
+                        branches=true;
+                    } else if (room==1 && hasAxe && branches) {
+                        System.out.println("The branches have already been cut..");
+                    } else if (room!=1 && room!=5 && hasAxe) {
+                        System.out.println("Nothing good to chop here...");
+                    } else if (room==5 && hasAxe && !hasWood) {
+                        System.out.println("You got some useless wood...");
+                        hasWood=true;
+                    } else if (room==5 && hasAxe && hasWood) {
+                        System.out.println("You don't need more useless wood..");
+                    }else { 
+                        System.out.println("You dont have an axe!");
+                    }
+                    break;
                 case "place wood":
                 case "use wood":
-                if (hasWood==true && room!=7) {
-                    System.out.println("the wood uselessly plopped on the ground...");
-                    hasWood=false;
-                } else if (room==7 && hasWood) {
-                    System.out.println("good firewood maybe????");
-                    hasWood=false;
-                }
-                else {
-                    System.out.println("what??? you don't have any wood.");
-                }
-                break;
+                    if (hasWood==true && room!=7) {
+                        System.out.println("The wood uselessly plopped on the ground...");
+                        hasWood=false;
+                    } else if (room==7 && hasWood) {
+                        System.out.println("Good firewood maybe????");
+                        hasWood=false;
+                    }
+                    else {
+                        System.out.println("What??? You don't have any wood.");
+                    }
+                    break;
+                    case "look":
+                        System.out.println(looking[room]);
+                    break;
+                    case "end game":
+                        lose=true;
+                    break;
                 default: System.out.println("try something else");
+            }
+            
+            if (lose==true) {
+                System.out.println("YOU LOST. THE END.");
+                running=false;
+            }
+            if (dinner==true) {
+                System.out.println(parts[3]);
+
+                System.out.println("YOU WON!!! CONGRATS.");
+                running=false;
             }
         }
     }
